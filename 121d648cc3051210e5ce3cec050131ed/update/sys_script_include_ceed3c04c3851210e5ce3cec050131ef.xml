@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_course_subsc.CoursesAjax</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>CoursesAjax</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var CoursesAjax = Class.create();
+CoursesAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {
+    getCourses: function() {
+        var courses = [];
+        var courseGR = new GlideRecord('u_course');
+        courseGR.query();
+        while (courseGR.next()) {
+            courses.push({
+                sys_id: courseGR.getUniqueValue(),
+                title: courseGR.getValue('title'),
+                description: courseGR.getValue('description')
+            });
+        }
+        return JSON.stringify(courses);
+    },
+    subscribeToCourse: function() {
+        var courseID = this.getParameter('sysparm_course_id');
+        var userSysID = gs.getUserID(); // Getting the ID of the current user
+
+        var subscription = new GlideRecord('u_course_subscription');
+        subscription.initialize();
+        subscription.learner = this.getParameter('sysparm_learner_id'); // Assuming you have a way to get the learner ID
+        subscription.course = courseID;
+        subscription.subscription_date = gs.nowDateTime();
+        return subscription.insert() ? 'success' : 'failure';
+    }
+});
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 22:13:07</sys_created_on>
+        <sys_id>ceed3c04c3851210e5ce3cec050131ef</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CoursesAjax</sys_name>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sys_script_include_ceed3c04c3851210e5ce3cec050131ef</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 22:15:43</sys_updated_on>
+    </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>ceed3c04c3851210e5ce3cec050131ef</id>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 22:13:07</sys_created_on>
+        <sys_id>052eb804c3851210e5ce3cec050131ac</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 22:13:07</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function($scope) {
+    var c = this;
+
+    c.$onInit = function() {
+        // Fetch subscribed courses
+        c.server.get({
+            action: 'getSubscribedCourses'
+        }).then(function(response) {
+            $scope.subscribedCourses = response.data.result;
+        });
+    };
+
+    c.$onInit();
+};
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>subscribed_courses_widget</id>
+        <internal>false</internal>
+        <link/>
+        <name>Subscribed Courses Widget</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function() {
+    var action = input.action;
+
+    if (action === 'getCourses') {
+        // Fetch available courses
+        var courseGR = new GlideRecord('u_course');
+        courseGR.query();
+        data.result = [];
+        while (courseGR.next()) {
+            data.result.push({
+                sys_id: courseGR.getValue('sys_id'),
+                title: courseGR.getValue('title'),
+                description: courseGR.getValue('description'),
+                type: courseGR.getValue('type'),
+                duration: courseGR.getValue('duration')
+            });
+        }
+    } else if (action === 'subscribeCourse' && input.courseId) {
+        // Subscribe learner to course
+        var learnerGR = new GlideRecord('u_learner');
+        learnerGR.addQuery('user_account', gs.getUserID());
+        learnerGR.query();
+        if (learnerGR.next()) {
+            var subGR = new GlideRecord('u_course_subscription');
+            subGR.initialize();
+            subGR.learner = learnerGR.sys_id;
+            subGR.course = input.courseId;
+            subGR.subscription_date = new GlideDateTime();
+            subGR.insert();
+            data.success = true;
+        } else {
+            data.success = false;
+        }
+    } else if (action === 'getSubscribedCourses') {
+        // Fetch subscribed courses for learner
+        learnerGR = new GlideRecord('u_learner');
+        learnerGR.addQuery('user_account', gs.getUserID());
+        learnerGR.query();
+        data.result = [];
+        if (learnerGR.next()) {
+            subGR = new GlideRecord('u_course_subscription');
+            subGR.addQuery('learner', learnerGR.sys_id);
+            subGR.query();
+            while (subGR.next()) {
+            courseGR = new GlideRecord('u_course');
+                courseGR.get(subGR.course);
+                data.result.push({
+                    sys_id: courseGR.getValue('sys_id'),
+                    title: courseGR.getValue('title'),
+                    description: courseGR.getValue('description'),
+                    type: courseGR.getValue('type'),
+                    duration: courseGR.getValue('duration')
+                });
+            }
+        }
+    }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:25:39</sys_created_on>
+        <sys_id>e9237444c3451210e5ce3cec05013151</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>Subscribed Courses Widget</sys_name>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sp_widget_e9237444c3451210e5ce3cec05013151</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:57:41</sys_updated_on>
+        <template><![CDATA[<div>
+    <h2>My Subscribed Courses</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="course in c.data.subscribedCourses">
+                <td>{{course.title}}</td>
+                <td>{{course.description}}</td>
+                <td>{{course.type}}</td>
+                <td>{{course.duration}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+]]></template>
+    </sp_widget>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>e9237444c3451210e5ce3cec05013151</id>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:25:38</sys_created_on>
+        <sys_id>2543f084c3451210e5ce3cec05013190</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:25:38</sys_updated_on>
+        <table>sp_widget</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>

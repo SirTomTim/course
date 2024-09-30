@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function($scope, $http) {
+    var c = this;
+
+    // Initialize the widget by fetching the available courses
+    c.$onInit = function() {
+        // Fetch courses from the server-side
+        c.server.get({
+            action: 'getCourses'
+        }).then(function(response) {
+            // Bind the fetched courses to the view model
+            $scope.courses = response.data.result;
+        });
+    };
+
+    // Function to subscribe to a course
+    $scope.subscribe = function(course) {
+        c.server.get({
+            action: 'subscribeCourse',
+            courseId: course.sys_id
+        }).then(function(response) {
+            if (response.data.success) {
+                alert("Successfully subscribed to " + course.title);
+            } else {
+                alert("Subscription failed!");
+            }
+        });
+    };
+
+    // Call $onInit to fetch the course list when the controller is initialized
+    c.$onInit();
+};
+
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>course_list_widget</id>
+        <internal>false</internal>
+        <link/>
+        <name>Course List Widget</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+    // Check the action passed from the client-side
+    var action = input.action;
+
+    // Action to get the list of available courses
+    if (action === 'getCourses') {
+        var courseGR = new GlideRecord('u_course');
+        courseGR.query();
+
+        var courses = [];
+        while (courseGR.next()) {
+            // Build course objects with required fields
+            courses.push({
+                sys_id: courseGR.getValue('sys_id'),
+                title: courseGR.getValue('title'),
+                description: courseGR.getValue('description'),
+                type: courseGR.getValue('type'),
+                duration: courseGR.getValue('duration')
+            });
+        }
+        // Send the list of courses back to the client-side
+        data.result = courses;
+    }
+
+    // Action to subscribe the learner to a course
+    else if (action === 'subscribeCourse' && input.courseId) {
+        var learnerGR = new GlideRecord('u_learner');
+        learnerGR.addQuery('user_account', gs.getUserID());
+        learnerGR.query();
+
+        if (learnerGR.next()) {
+            // Create a new subscription record
+            var subscriptionGR = new GlideRecord('u_course_subscription');
+            subscriptionGR.initialize();
+            subscriptionGR.learner = learnerGR.sys_id;
+            subscriptionGR.course = input.courseId;
+            subscriptionGR.subscription_date = new GlideDateTime();
+            subscriptionGR.insert();
+
+            data.success = true;  // Success response
+        } else {
+            data.success = false; // Failure response
+        }
+    }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:19:10</sys_created_on>
+        <sys_id>7670b0c0c3451210e5ce3cec050131f9</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Course List Widget</sys_name>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sp_widget_7670b0c0c3451210e5ce3cec050131f9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:49:49</sys_updated_on>
+        <template><![CDATA[<div>
+    <h2>Available Courses</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="course in c.data.courses">
+                <td>{{course.title}}</td>
+                <td>{{course.description}}</td>
+                <td>{{course.type}}</td>
+                <td>{{course.duration}}</td>
+                <td>
+                    <button class="btn btn-primary" ng-click="c.subscribe(course)">
+                        Subscribe
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+]]></template>
+    </sp_widget>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>7670b0c0c3451210e5ce3cec050131f9</id>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:19:09</sys_created_on>
+        <sys_id>6ec1b0c0c3451210e5ce3cec050131c8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:19:09</sys_updated_on>
+        <table>sp_widget</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>
