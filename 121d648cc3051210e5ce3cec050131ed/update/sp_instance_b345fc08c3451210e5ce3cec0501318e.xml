@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph/>
+        <id/>
+        <order>1</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="1">1b45f048c3451210e5ce3cec0501319c</sp_column>
+        <sp_widget display_value="Course List Widget">7670b0c0c3451210e5ce3cec050131f9</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:34:31</sys_created_on>
+        <sys_id>b345fc08c3451210e5ce3cec0501318e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sp_instance_b345fc08c3451210e5ce3cec0501318e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:34:31</sys_updated_on>
+        <title/>
+        <url/>
+        <widget_parameters/>
+    </sp_instance>
+    <sys_translated_text action="delete_multiple" query="documentkey=b345fc08c3451210e5ce3cec0501318e"/>
+</record_update>

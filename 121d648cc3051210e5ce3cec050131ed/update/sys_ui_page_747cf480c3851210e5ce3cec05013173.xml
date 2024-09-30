@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[function getCourses() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Parse JSON response
+            var response = JSON.parse(this.responseText);
+            var courses = response.result;
+            updateCourseList(courses);
+        }
+    };
+    xhr.open("GET", "https://dev288440.service-now.com/api/now/table/u_course", true);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:ABjYZ@6x+gv7'));
+    xhr.send();
+}
+
+function updateCourseList(courses) {
+    var courseListHTML = '';
+    courses.forEach(function(course) {
+        courseListHTML += '<div>' +
+            '<h3>' + course.u_title + '</h3>' + // Adjust field names based on your actual API response
+            '<p>' + course.u_description + '</p>' +
+			'<p>Duration: ' + course.u_duration + '</p>' +
+            '<button onclick="subscribeToCourse(\'' + course.sys_id + '\')">Subscribe</button>' +
+        '</div>';
+    });
+    document.getElementById('coursesList').innerHTML = courseListHTML;
+}
+
+window.onload = getCourses; // Call getCourses when the page loads
+]]></client_script>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_snc_course_subsc_course.do</endpoint>
+        <html><![CDATA[<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null">
+    <g:evaluate var="jvar_courses" jelly="true">
+        var courseGR = new GlideRecord('u_course');
+        courseGR.query();
+        var courses = [];
+        while (courseGR.next()) {
+            courses.push({
+                sys_id: courseGR.sys_id.toString(),
+                title: courseGR.getValue('u_title'),
+                description: courseGR.getValue('u_description'),
+				duration: courseGR.getValue('u_duration')
+            });
+        }
+        courses;
+    </g:evaluate>
+    <div>
+        <h1>Available Courses</h1>
+        <div id="coursesList">
+            <j:forEach var="course" items="${jvar_courses}">
+                <div>
+                    <h3>${u_course.u_title}</h3>
+                    <p>${u_course.u_description}</p>
+					<p>${u_course.u_duration}</p>
+                    <button onclick="subscribeToCourse('${course.sys_id}')">Subscribe</button>
+                </div>
+            </j:forEach>
+        </div>
+    </div>
+</j:jelly>
+]]></html>
+        <name>course</name>
+        <processing_script><![CDATA[function subscribeToCourse(courseId) {
+    var ga = new GlideAjax('ProcessSubscription'); // This will call the Processing Script below
+    ga.addParam('sysparm_name', 'subscribeToCourse');
+    ga.addParam('sysparm_course_id', courseId);
+    ga.getXMLAnswer(function(response) {
+        if (response == 'success') {
+            alert('Subscription successful!');
+            // Optionally refresh the course list here
+        } else {
+            alert('Failed to subscribe.');
+        }
+    });
+}
+]]></processing_script>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 22:10:52</sys_created_on>
+        <sys_id>747cf480c3851210e5ce3cec05013173</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>course</sys_name>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sys_ui_page_747cf480c3851210e5ce3cec05013173</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-30 01:56:18</sys_updated_on>
+    </sys_ui_page>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>747cf480c3851210e5ce3cec05013173</id>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 22:10:51</sys_created_on>
+        <sys_id>379d3800c3851210e5ce3cec05013145</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 22:10:51</sys_updated_on>
+        <table>sys_ui_page</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>

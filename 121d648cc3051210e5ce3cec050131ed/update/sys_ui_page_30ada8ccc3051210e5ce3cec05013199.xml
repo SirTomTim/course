@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[// Fetch and display the list of available courses
+function fetchCourses() {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/api/x_quo_coursehub/course', true); // API for fetching courses
+
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            var courses = JSON.parse(request.responseText);
+            var courseList = document.getElementById('course-list');
+            courseList.innerHTML = '';
+
+            courses.result.forEach(function (course) {
+                var courseItem = document.createElement('div');
+                courseItem.innerHTML = '<h3>' + course.title + '</h3><p>' + course.description + '</p><button onclick="subscribeToCourse(\'' + course.sys_id + '\')">Subscribe</button>';
+                courseList.appendChild(courseItem);
+            });
+        }
+    };
+    request.send();
+}
+
+// Subscribe a learner to a course
+function subscribeToCourse(courseId) {
+    var request = new XMLHttpRequest();
+    request.open('POST', '/api/x_quo_coursehub/course_subscription', true); // API for subscribing
+
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            alert('Subscribed successfully!');
+            fetchMyCourses(); // Refresh the subscription list
+        }
+    };
+
+    var data = JSON.stringify({
+        course: courseId,
+        learner: 'PUT_YOUR_LEARNER_SYS_ID_HERE' // Reference to current learner
+    });
+    request.send(data);
+}
+
+// Fetch and display the list of courses the learner has subscribed to
+function fetchMyCourses() {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/api/x_quo_coursehub/my_courses', true); // API for fetching subscribed courses
+
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            var courses = JSON.parse(request.responseText);
+            var myCoursesList = document.getElementById('my-courses');
+            myCoursesList.innerHTML = '';
+
+            courses.result.forEach(function (course) {
+                var courseItem = document.createElement('div');
+                courseItem.innerHTML = '<h3>' + course.title + '</h3><p>' + course.description + '</p>';
+                myCoursesList.appendChild(courseItem);
+            });
+        }
+    };
+    request.send();
+}
+
+// Add event listener for fetching courses
+document.getElementById('fetch-courses').addEventListener('click', fetchCourses);
+]]></client_script>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_snc_course_subsc_course_subscription_page.do</endpoint>
+        <html><![CDATA[<div class="container">
+    <h1>Course List</h1>
+    <div id="course-list"></div>
+    <button id="fetch-courses">Fetch Courses</button>
+
+    <h2>My Subscriptions</h2>
+    <div id="my-courses"></div>
+</div>]]></html>
+        <name>course_subscription_page</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:02:19</sys_created_on>
+        <sys_id>30ada8ccc3051210e5ce3cec05013199</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>course_subscription_page</sys_name>
+        <sys_package display_value="Course Subscription Application" source="x_snc_course_subsc">121d648cc3051210e5ce3cec050131ed</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Course Subscription Application">121d648cc3051210e5ce3cec050131ed</sys_scope>
+        <sys_update_name>sys_ui_page_30ada8ccc3051210e5ce3cec05013199</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:02:19</sys_updated_on>
+    </sys_ui_page>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>30ada8ccc3051210e5ce3cec05013199</id>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2024-09-29 21:02:18</sys_created_on>
+        <sys_id>37eda48cc3051210e5ce3cec050131fc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2024-09-29 21:02:18</sys_updated_on>
+        <table>sys_ui_page</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
+</record_update>
